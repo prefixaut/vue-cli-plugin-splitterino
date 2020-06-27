@@ -11,18 +11,21 @@ module.exports = (api, options) => {
             description: 'Bundles your plugin into an installable plugin-package',
             usage: 'vue-cli-service package [options]',
             options: {
-                '--plugin': 'If the bundler bundles a Splitterino Plugin. Cannot be used in conjunction with --template',
-                '--template': 'If the bundler bundles a Splitterino Template. Cannot be used in conjunction with --plugin',
+                '--plugin':
+                    'If the bundler bundles a Splitterino Plugin. Cannot be used in conjunction with --template',
+                '--template':
+                    'If the bundler bundles a Splitterino Template. Cannot be used in conjunction with --plugin',
                 '--files': 'Specifies the files to bundle up. Uses the glob-pattern (ie. **/*.js)',
                 '--meta': 'Specifies the meta-file to bunlde up, instead of creating one from the package.json',
                 '--skip-meta': 'If it should skip the inclusion of the meta-file completely',
-                '--output': 'Specifies the output-file of the bundled plugin-package. Defaults to "[package-name].splplg"',
+                '--output':
+                    'Specifies the output-file of the bundled plugin-package. Defaults to "[package-name].splplg"',
             },
         },
         args => {
             const pkg = JSON.parse(fs.readFileSync(api.resolve('package.json')));
-            let outFile = api.resolve(pkg.name + '.splplg');
-            let filesGlob = options.outputDir + '/**/*';
+            let outFile = api.resolve(`${pkg.name}.splplg`);
+            let filesGlob = `**/*`;
             let meta = {
                 name: pkg.name,
                 version: pkg.version,
@@ -40,6 +43,7 @@ module.exports = (api, options) => {
                     meta = JSON.parse(fs.readFileSync(path.resolve(args.meta)));
                 } catch (err) {
                     console.error(`The file "${args.meta}" could not be found/loaded!`);
+
                     return false;
                 }
             }
@@ -53,14 +57,14 @@ module.exports = (api, options) => {
             }
 
             const outStream = fs.createWriteStream(outFile);
-            
+
             tarFs
-                .pack(api.resolve('./'), {
+                .pack(api.resolve(`./${options.outputDir}`), {
                     entries: glob.sync(filesGlob, {
-                        root: api.resolve('./'),
+                        root: api.resolve(`./${options.outputDir}`),
                     }),
                     finalize: false,
-                    finish: (pack) => {
+                    finish: pack => {
                         if (!args['skip-meta']) {
                             pack.entry({ name: 'meta.json' }, JSON.stringify(meta, null, 4));
                         }

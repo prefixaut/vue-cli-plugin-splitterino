@@ -50,7 +50,7 @@ module.exports = {
         'no-bitwise': 'off',
         'no-caller': 'warn',
         'no-cond-assign': 'warn',
-        'no-console': 'warn',
+        'no-console': 'off',
         'no-debugger': 'off',
         'no-duplicate-case': 'warn',
         'no-duplicate-imports': 'warn',
